@@ -37,7 +37,7 @@ class _Sudoku_ScreenState extends State<Sudoku_Screen> {
             child: Container(
               child: Padding(
               padding: EdgeInsets.all(10),
-              child: Expanded(
+              child: Center(
                 child: AspectRatio(
                   aspectRatio: 1,
                   child: SudokuGrid(
@@ -59,6 +59,7 @@ class _Sudoku_ScreenState extends State<Sudoku_Screen> {
             flex: 2, 
             child: 
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
