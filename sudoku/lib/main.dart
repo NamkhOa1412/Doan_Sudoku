@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sudoku/sudoku_trangchu/screen_Stargame.dart';
 import 'package:sudoku/sudoku_widget/sudoku_play_screen.dart';
 
 void main() {
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Sudoku_Screen()
+      // home: Sudoku_Screen()
+      home: trangchu_Screen()
     );
   }
 }
