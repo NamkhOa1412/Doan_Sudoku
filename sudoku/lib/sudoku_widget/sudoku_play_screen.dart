@@ -22,7 +22,7 @@ class _Sudoku_ScreenState extends State<Sudoku_Screen> {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: CustomAppBar(
-        title: "Chuỗi ", 
+        title: "Sudoku", 
         actions: [],
       ),
       body: Column(
@@ -36,10 +36,15 @@ class _Sudoku_ScreenState extends State<Sudoku_Screen> {
             flex: 6,
             child: Container(
               child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: SudokuGrid(
-                grid: grid,
-                editableCells: editableCells,
+              padding: EdgeInsets.all(10),
+              child: Expanded(
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: SudokuGrid(
+                    grid: grid,
+                    editableCells: editableCells,
+                  ),
+                ),
               ),
                   ),
             ),
@@ -53,12 +58,16 @@ class _Sudoku_ScreenState extends State<Sudoku_Screen> {
           Expanded(
             flex: 2, 
             child: 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(9, (index) {
-                  return Button_Number(data: index + 1, width: width,);
-                })
-            )
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: List.generate(9, (index) {
+                      return Button_Number(data: index + 1, width: width,);
+                    })
+            ),
+                ],
+              )
           )
         ],
       )
