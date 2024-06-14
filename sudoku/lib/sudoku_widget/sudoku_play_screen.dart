@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sudoku/Sudoku_provider.dart/Provider.dart';
 import 'package:sudoku/Untils/btn-number.dart';
 import 'package:sudoku/sudoku_widget/widget/info.dart';
 import 'package:sudoku/sudoku_widget/widget/sudoku_appbar.dart';
@@ -40,9 +42,12 @@ class _Sudoku_ScreenState extends State<Sudoku_Screen> {
               child: Center(
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: SudokuGrid(
-                    grid: grid,
-                    editableCells: editableCells,
+                  child: ChangeNotifierProvider (
+                    create: (context) => SudokuColorProvider(),
+                    child:  SudokuGrid(
+                      grid: grid,
+                      editableCells: editableCells,
+                    ),
                   ),
                 ),
               ),

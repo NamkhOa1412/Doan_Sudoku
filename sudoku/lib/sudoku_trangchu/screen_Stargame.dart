@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sudoku/sudoku_widget/sudoku_play_screen.dart';
 
 class trangchu_Screen extends StatefulWidget {
   const trangchu_Screen({Key? key}) : super(key: key);
@@ -47,7 +48,7 @@ class _trangchu_ScreenState extends State<trangchu_Screen> {
                       
                     ),
                     onTap: () {
-                      
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Sudoku_Screen()));
                     },
                   ),
                   Container(
