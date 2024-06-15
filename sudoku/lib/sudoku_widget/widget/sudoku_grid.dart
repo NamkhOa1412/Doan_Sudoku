@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sudoku/Sudoku_provider.dart/Provider.dart';
 import 'sudoku_cell.dart';
 
 class SudokuGrid extends StatelessWidget {
@@ -9,6 +11,7 @@ class SudokuGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = Provider.of<SudokuColorProvider>(context);
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 9,
@@ -32,9 +35,11 @@ class SudokuGrid extends StatelessWidget {
           child: SudokuCell(
             value: grid[row][col],
             isEditable: editableCells[row][col],
+            cellColor: color.cellColors[row][col],
             onChanged: (newValue) {
               grid[row][col] = newValue;
             },
+            onTap: () => color.ChangeColor(row, col),
           ),
         );
       },
