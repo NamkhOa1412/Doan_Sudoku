@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sudoku/sudoku_widget/sudoku_play_screen.dart';
 
 class trangchu_Screen extends StatefulWidget {
@@ -48,7 +49,7 @@ class _trangchu_ScreenState extends State<trangchu_Screen> {
                       
                     ),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: "Dễ",)));
+                      showAlertDialog(context);
                     },
                   ),
                   Container(
@@ -86,7 +87,7 @@ class _trangchu_ScreenState extends State<trangchu_Screen> {
                       
                     ),
                     onTap: () {
-                      
+                      SystemNavigator.pop();
                     },
                   )
                   
@@ -101,3 +102,77 @@ class _trangchu_ScreenState extends State<trangchu_Screen> {
     );
   }
 }
+showAlertDialog(BuildContext context) {  
+  // Create button  
+  Widget easyButton = InkWell(
+                    
+                    child: Container(
+                      height: ((MediaQuery.of(context).size.height) / 15.0) ,
+                      width: ((MediaQuery.of(context).size.height) / 10.0),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(image: AssetImage("assets/image_trangchu/btn_easy.png"),
+                        fit: BoxFit.fill)
+                      ),
+                      
+                    ),
+                    onTap: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: "Dễ",)));
+                      
+                    },
+                  );
+  Widget hardButton = InkWell(
+                    
+                    child: Container(
+                      height: ((MediaQuery.of(context).size.height) / 15.0) ,
+                      width: ((MediaQuery.of(context).size.height) / 10.0),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(image: AssetImage("assets/image_trangchu/btn_Hard.png"),
+                        fit: BoxFit.fill)
+                      ),
+                      
+                    ),
+                    onTap: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: "Khó",)));
+                      
+                    },
+                  );
+  
+  // Create AlertDialog  
+  AlertDialog alert = AlertDialog(  
+    backgroundColor: Colors.amberAccent ,
+    shape: RoundedRectangleBorder(
+        side:  BorderSide(color: Colors.brown,width: 3),
+        borderRadius: BorderRadius.all(Radius.circular(15))
+    ),
+    title: Text("MODE",
+    style: TextStyle(
+      fontSize: 30,
+      fontWeight: FontWeight.bold,
+      color: Colors.white
+    ),
+    textAlign: TextAlign.center,
+    ),  
+    content: null ,  
+    actions: [  
+      // easyButton,
+      // hardButton,  
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          easyButton,
+          hardButton,
+        ],
+      )
+    ],  
+  );  
+  
+  // show the dialog  
+  showDialog(  
+    context: context,  
+    builder: (BuildContext context) {  
+      return alert;  
+    },  
+  );  
+} 
