@@ -65,6 +65,8 @@ flutter:
     - assets/image_trangchu/sta.png
     - assets/image_trangchu/ctn.png
     - assets/image_trangchu/ext.png
+    - assets/image_trangchu/btn_easy.png
+    - assets/image_trangchu/btn_Hard.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
