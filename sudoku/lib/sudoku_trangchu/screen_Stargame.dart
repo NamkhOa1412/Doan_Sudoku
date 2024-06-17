@@ -48,7 +48,7 @@ class _trangchu_ScreenState extends State<trangchu_Screen> {
                       
                     ),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Sudoku_Screen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: "Dễ",)));
                     },
                   ),
                   Container(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sudoku/Sudoku_provider.dart/CreateSudokuStart.dart';
 
 class SudokuCell extends StatefulWidget {
   final int value;
@@ -43,6 +45,7 @@ class _SudokuCellState extends State<SudokuCell> {
             : Center(
                 child: Text(
                   widget.value != 0 ? widget.value.toString() : '',
+                  // widget.value.toString(),
                   style: TextStyle(fontSize: 20),
                 ),
               ),

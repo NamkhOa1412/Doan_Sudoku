@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sudoku/Sudoku_provider.dart/CreateSudokuStart.dart';
 import 'package:sudoku/Sudoku_provider.dart/Provider.dart';
 import 'sudoku_cell.dart';
 
-class SudokuGrid extends StatelessWidget {
+class SudokuGrid extends StatefulWidget {
   final List<List<int>> grid;
   final List<List<bool>> editableCells;
 
   SudokuGrid({required this.grid, required this.editableCells});
+  @override
+  _SudokuGridState createState() => _SudokuGridState();
+}
+
+class _SudokuGridState extends State<SudokuGrid> {
+  late List<List<int>> sudokuBoard;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the Sudoku puzzle once
+    sudokuBoard = Provider.of<SudokuStart>(context, listen: false).createSudokuPuzzle(35);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +47,11 @@ class SudokuGrid extends StatelessWidget {
             ),
           ),
           child: SudokuCell(
-            value: grid[row][col],
-            isEditable: editableCells[row][col],
+            value: sudokuBoard[row][col],
+            isEditable: widget.editableCells[row][col],
             cellColor: color.cellColors[row][col],
             onChanged: (newValue) {
-              grid[row][col] = newValue;
+              widget.grid[row][col] = newValue;
             },
             onTap: () => color.ChangeColor(row, col),
           ),

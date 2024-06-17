@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:sudoku/Untils/custom-text.dart';
 
 class Info_sudoku_play extends StatefulWidget {
-  const Info_sudoku_play({ Key? key }) : super(key: key);
+  String lever;
+  Info_sudoku_play({ Key? key , required this.lever}) : super(key: key);
 
   @override
   State<Info_sudoku_play> createState() => _Info_sudoku_playState();
@@ -50,7 +51,7 @@ class _Info_sudoku_playState extends State<Info_sudoku_play> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                       //cấp độ
-                      CustomText(text: "Dễ ",fontsize: 15),
+                      CustomText(text: widget.lever,fontsize: 15),
                     ],),
                   ),
                   Expanded(
