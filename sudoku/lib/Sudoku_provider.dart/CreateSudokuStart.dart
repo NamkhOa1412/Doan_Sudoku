@@ -5,6 +5,11 @@ import 'package:flutter/cupertino.dart';
 class SudokuStart extends ChangeNotifier{
   // Tạo bảng Sudoku 9x9 trống
   List<List<int>> _board = List.generate(9, (_) => List.filled(9, 0));
+  List<List<bool>> _editableCells = List.generate(9, (_) => List.filled(9, true));
+  List<List<int>> boardcur =[];
+  List<List<int>> board_result =[];
+  int? _selectedRow;
+  int? _selectedCol;
 
   // Kiểm tra xem một số có thể đặt tại vị trí (row, col) hay không
   bool _canPlace(int num, int row, int col) {
@@ -32,8 +37,13 @@ class SudokuStart extends ChangeNotifier{
       row++;
       col = 0;
     }
+    
+    List<int> numbers = List.generate(9, (index) => index + 1);
+    if (row == 0) {
+      numbers.shuffle();
+    }
 
-    for (int num = 1; num <= 9; num++) {
+    for (int num in numbers) {
       if (_canPlace(num, row, col)) {
         _board[row][col] = num;
         if (_fillBoard(row, col + 1)) return true;
@@ -51,6 +61,7 @@ class SudokuStart extends ChangeNotifier{
   }
 
   void _removeDigits(List<List<int>> board, int numToRemove) {
+    
     Random random = Random();
     while (numToRemove > 0) {
       int row = random.nextInt(9);
@@ -61,22 +72,48 @@ class SudokuStart extends ChangeNotifier{
         numToRemove--;
       }
     }
+    
   }
 
   // Tạo mảng ban đầu cho game Sudoku
   List<List<int>> createSudokuPuzzle(int numToRemove) {
-    print(123);
     SudokuStart generator = SudokuStart();
     List<List<int>> board = generator.generateSudoku();
     _removeDigits(board, numToRemove);
+    boardcur = board;
     return board; 
   }
 
-  // In mảng Sudoku xuống dòng
-  void printBoard(List<List<int>> board) {
-    debugPrint("mang");
-    for (var row in board) {
-      debugPrint(row.toString());
+  // Đặt số tại vị trí ô đã chọn
+  void placeNumber(int number) {
+    try {
+      if (_selectedRow != null && _selectedCol != null && _editableCells[_selectedRow!][_selectedCol!]) {
+        if(boardcur[_selectedRow!][_selectedCol!] == 0 ) {
+          // if ([_selectedRow!][_selectedCol!] == number) {
+            boardcur[_selectedRow!][_selectedCol!] = number;
+            notifyListeners();
+          // }
+          // else {
+          //   print("nhap sai kq");
+          // }
+          
+        }
+        else { print("lỗi"); }
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  void selectCell(int row, int col) {
+    try {
+      if (_editableCells[row][col]) {
+        _selectedRow = row;
+        _selectedCol = col;
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Error: $e");
     }
   }
 }

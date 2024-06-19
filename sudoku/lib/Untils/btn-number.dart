@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sudoku/Sudoku_provider.dart/CreateSudokuStart.dart';
 
 class Button_Number extends StatelessWidget {
   final double width;
@@ -17,6 +19,7 @@ class Button_Number extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         //nhập giá trị lên ma trận
+        Provider.of<SudokuStart>(context, listen: false).placeNumber(data);
       },
       child: Container(
         width: width / 12,
