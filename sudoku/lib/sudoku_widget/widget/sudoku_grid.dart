@@ -7,8 +7,9 @@ import 'sudoku_cell.dart';
 class SudokuGrid extends StatefulWidget {
   final List<List<int>> grid;
   final List<List<bool>> editableCells;
+  final String lever;
 
-  SudokuGrid({required this.grid, required this.editableCells});
+  SudokuGrid({required this.grid, required this.editableCells, required this.lever});
   @override
   _SudokuGridState createState() => _SudokuGridState();
 }
@@ -20,12 +21,13 @@ class _SudokuGridState extends State<SudokuGrid> {
   void initState() {
     super.initState();
     // Initialize the Sudoku puzzle once
-    sudokuBoard = Provider.of<SudokuStart>(context, listen: false).createSudokuPuzzle(35);
+    sudokuBoard = Provider.of<SudokuStart>(context, listen: false).createSudokuPuzzle(widget.lever == "Dễ" ? 35 : 45);
   }
 
   @override
   Widget build(BuildContext context) {
     final color = Provider.of<SudokuColorProvider>(context);
+    final sudoku = Provider.of<SudokuStart>(context);
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 9,
@@ -53,7 +55,10 @@ class _SudokuGridState extends State<SudokuGrid> {
             onChanged: (newValue) {
               widget.grid[row][col] = newValue;
             },
-            onTap: () => color.ChangeColor(row, col),
+            onTap: () {
+             color.ChangeColor(row, col);
+             sudoku.selectCell(row, col);
+            },
           ),
         );
       },

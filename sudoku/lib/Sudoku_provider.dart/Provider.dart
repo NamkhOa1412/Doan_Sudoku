@@ -31,7 +31,7 @@ class SudokuColorProvider extends ChangeNotifier {
           cellColors[i][j] = Colors.grey[400] ?? Colors.grey;
         }
       }
-      cellColors[row][col] = Colors.grey;
+      cellColors[row][col] = Colors.lightBlue;
 
       notifyListeners();
     // });
