@@ -1,15 +1,19 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class SudokuStart extends ChangeNotifier{
   // Tạo bảng Sudoku 9x9 trống
   List<List<int>> _board = List.generate(9, (_) => List.filled(9, 0));
-  List<List<bool>> _editableCells = List.generate(9, (_) => List.filled(9, true));
+  List<List<bool>> editableCells = List.generate(9, (_) => List.filled(9, true));
   List<List<int>> boardcur =[];
+   List<List<int>> _fullBoard = [];
   List<List<int>> board_result =[];
   int? _selectedRow;
   int? _selectedCol;
+  List<List<bool>> checkCell = List.generate(9, (_) => List.filled(9, true));
+
 
   // Kiểm tra xem một số có thể đặt tại vị trí (row, col) hay không
   bool _canPlace(int num, int row, int col) {
@@ -74,29 +78,45 @@ class SudokuStart extends ChangeNotifier{
     }
     
   }
+    List<List<int>> _deepCopyBoard(List<List<int>> board) {
+    return board.map((row) => List<int>.from(row)).toList();
+  }
+
 
   // Tạo mảng ban đầu cho game Sudoku
   List<List<int>> createSudokuPuzzle(int numToRemove) {
-    SudokuStart generator = SudokuStart();
-    List<List<int>> board = generator.generateSudoku();
-    _removeDigits(board, numToRemove);
-    boardcur = board;
-    return board; 
+     _board = List.generate(9, (_) => List.filled(9, 0));
+    generateSudoku();
+    _fullBoard = _deepCopyBoard(_board);
+
+    print(_fullBoard);
+
+    _removeDigits(_board, numToRemove);
+
+
+    boardcur = _board;
+    return _board;
   }
 
   // Đặt số tại vị trí ô đã chọn
   void placeNumber(int number) {
     try {
-      if (_selectedRow != null && _selectedCol != null && _editableCells[_selectedRow!][_selectedCol!]) {
+     
+      if (_selectedRow != null && _selectedCol != null && editableCells[_selectedRow!][_selectedCol!]) {
         if(boardcur[_selectedRow!][_selectedCol!] == 0 ) {
-          // if ([_selectedRow!][_selectedCol!] == number) {
-            boardcur[_selectedRow!][_selectedCol!] = number;
-            notifyListeners();
-          // }
-          // else {
-          //   print("nhap sai kq");
-          // }
-          
+          if(_fullBoard[_selectedRow!][_selectedCol!] == number) {
+            print("xanh");
+            boardcur[_selectedRow!][_selectedCol!] = number; 
+            checkCell[_selectedRow!][_selectedCol!] = true;
+          }
+          else {
+            print("đỏ");
+            boardcur[_selectedRow!][_selectedCol!] = number; 
+            checkCell[_selectedRow!][_selectedCol!] = false;
+          }
+          // boardcur[selectedRow!][selectedCol!] = number; 
+
+          notifyListeners();
         }
         else { print("lỗi"); }
       }
@@ -107,7 +127,7 @@ class SudokuStart extends ChangeNotifier{
 
   void selectCell(int row, int col) {
     try {
-      if (_editableCells[row][col]) {
+      if (editableCells[row][col]) {
         _selectedRow = row;
         _selectedCol = col;
         notifyListeners();
@@ -116,4 +136,5 @@ class SudokuStart extends ChangeNotifier{
       print("Error: $e");
     }
   }
+  bool check_Cell(int row, int col) => checkCell[row][col]; 
 }
