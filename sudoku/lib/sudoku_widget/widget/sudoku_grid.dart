@@ -49,6 +49,8 @@ class _SudokuGridState extends State<SudokuGrid> {
             ),
           ),
           child: SudokuCell(
+            row: row,
+            col: col,
             value: sudokuBoard[row][col],
             isEditable: widget.editableCells[row][col],
             cellColor: color.cellColors[row][col],
