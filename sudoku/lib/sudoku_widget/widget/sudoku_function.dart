@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sudoku/Sudoku_provider.dart/CreateSudokuStart.dart';
 
 class Sudoku_Func extends StatelessWidget {
   const Sudoku_Func({ Key? key }) : super(key: key);
@@ -14,6 +16,7 @@ class Sudoku_Func extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 print("xóa");
+                Provider.of<SudokuStart>(context, listen: false).removeNumber();
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

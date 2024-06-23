@@ -25,7 +25,7 @@ class Button_Number extends StatelessWidget {
         width: width / 12,
         height: height,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.green.shade700,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
@@ -42,7 +42,7 @@ class Button_Number extends StatelessWidget {
             Text(
               "$data",
               style: TextStyle(
-                color: Colors.blue,
+                color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.bold
               ),

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:sudoku/Sudoku_provider.dart/CreateSudokuStart.dart';
 import 'package:sudoku/Untils/custom-text.dart';
 
 class Info_sudoku_play extends StatefulWidget {
@@ -13,6 +15,7 @@ class Info_sudoku_play extends StatefulWidget {
 class _Info_sudoku_playState extends State<Info_sudoku_play> {
   @override
   Widget build(BuildContext context) {
+    final error = context.watch<SudokuStart>().errorpoint;
     return Container(
       child: Column(
         children: [
@@ -23,7 +26,7 @@ class _Info_sudoku_playState extends State<Info_sudoku_play> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CustomText(text: "Điểm số: ",fontsize: 17,textColor: Colors.blue,),
+                  CustomText(text: "Điểm số: ",fontsize: 17,textColor: Colors.green,),
                   //truyền điểm
                   CustomText(text: "0",fontsize: 17,fontWeight: FontWeight.bold,)
                 ],
@@ -42,7 +45,7 @@ class _Info_sudoku_playState extends State<Info_sudoku_play> {
                       children: [
                       CustomText(text: "Lỗi: ",fontsize: 15),
                       //lỗi có thể đổi
-                      CustomText(text: "0",fontsize: 15),
+                      CustomText(text: error.toString(),fontsize: 15),
                       CustomText(text: "/3",fontsize: 15,)
                     ],),
                   ),

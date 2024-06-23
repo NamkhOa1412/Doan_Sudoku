@@ -15,20 +15,20 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.topRight,
                 colors: [
-                  Colors.white,
-                  Colors.white,
+                  Colors.green.shade700,
+                  Colors.green.shade900,
             ])),
       ),
       elevation: 0,
       title: CustomText(
         text: title,
-        textColor: Colors.black,
+        textColor: Colors.white,
         fontWeight: FontWeight.bold,
       ),
       leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
+            color: Colors.white,
             size: 24,
           ),
           onPressed: () {
