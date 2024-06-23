@@ -20,8 +20,7 @@ class _SudokuGridState extends State<SudokuGrid> {
   @override
   void initState() {
     super.initState();
-    // Initialize the Sudoku puzzle once
-    sudokuBoard = Provider.of<SudokuStart>(context, listen: false).createSudokuPuzzle(widget.lever == "Dễ" ? 35 : 45);
+    sudokuBoard = Provider.of<SudokuStart>(context, listen: false).createSudokuPuzzle(widget.lever == "Dễ" ? 40 : 45);
   }
 
   @override

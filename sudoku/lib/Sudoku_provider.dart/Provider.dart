@@ -19,8 +19,8 @@ class SudokuColorProvider extends ChangeNotifier {
 
       // dổi màu cột và dòng chứa ô hover
       for (int i = 0; i < 9; i++) {
-        cellColors[row][i] = Colors.grey[400] ?? Colors.grey; // Highlight row
-        cellColors[i][col] = Colors.grey[400] ?? Colors.grey; // Highlight column
+        cellColors[row][i] = Colors.grey.shade400;
+        cellColors[i][col] = Colors.grey.shade400;
       }
 
       // đổi màu vùng 3x3 chứa ô hover
@@ -28,10 +28,10 @@ class SudokuColorProvider extends ChangeNotifier {
       int startCol = (col ~/ 3) * 3;
       for (int i = startRow; i < startRow + 3; i++) {
         for (int j = startCol; j < startCol + 3; j++) {
-          cellColors[i][j] = Colors.grey[400] ?? Colors.grey;
+          cellColors[i][j] = Colors.grey.shade400;
         }
       }
-      cellColors[row][col] = Colors.lightBlue;
+      cellColors[row][col] = Colors.green;
 
       notifyListeners();
     // });

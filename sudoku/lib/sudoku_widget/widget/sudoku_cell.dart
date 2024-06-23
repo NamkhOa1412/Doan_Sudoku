@@ -47,7 +47,7 @@ class _SudokuCellState extends State<SudokuCell> {
                   widget.value != 0 ? widget.value.toString() : '',
                   // widget.value.toString(),
                   style: TextStyle(fontSize: 20,
-                  color: isEditable ? (isCellCorrect ? Colors.black : Colors.red) : Colors.blue,
+                  color: isEditable ? (isCellCorrect ? Colors.black : Colors.red) : Colors.black,
                   ),
                 ),
               ),
