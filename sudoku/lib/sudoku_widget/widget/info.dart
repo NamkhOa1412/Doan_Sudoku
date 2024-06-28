@@ -16,23 +16,24 @@ class _Info_sudoku_playState extends State<Info_sudoku_play> {
   @override
   Widget build(BuildContext context) {
     final error = context.watch<SudokuStart>().errorpoint;
+    final time = context.watch<SudokuStart>().Time();
     return Container(
       child: Column(
         children: [
-          Expanded(
-            //điểm
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomText(text: "Điểm số: ",fontsize: 17,textColor: Colors.green,),
-                  //truyền điểm
-                  CustomText(text: "0",fontsize: 17,fontWeight: FontWeight.bold,)
-                ],
-              ),
-            )
-          ),
+          // Expanded(
+          //   //điểm
+          //   child: Container(
+          //     alignment: Alignment.bottomCenter,
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         CustomText(text: "Điểm số: ",fontsize: 17,textColor: Colors.green,),
+          //         //truyền điểm
+          //         CustomText(text: "0",fontsize: 17,fontWeight: FontWeight.bold,)
+          //       ],
+          //     ),
+          //   )
+          // ),
           Expanded(
             child: Container(
               alignment: Alignment.bottomCenter,
@@ -62,7 +63,7 @@ class _Info_sudoku_playState extends State<Info_sudoku_play> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                       //thời gian
-                      CustomText(text: "00.00 ",fontsize: 15),
+                      CustomText(text: time.toString(),fontsize: 15),
                     ],),
                   ),
                 ],

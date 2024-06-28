@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sudoku/sudoku_trangchu/screen_Stargame.dart';
+import 'package:sudoku/sudoku_widget/sudoku_play_screen.dart';
 
 class SudokuStart extends ChangeNotifier{
   // Tạo bảng Sudoku 9x9 trống
@@ -14,10 +16,69 @@ class SudokuStart extends ChangeNotifier{
   int? selectedCol;
   int errorpoint = 0;
   List<List<bool>> checkCell = List.generate(9, (_) => List.filled(9, true));
+  Timer? timer;
+  DateTime? StartTime;
+  int Minutes = 0;
+  int Seconds = 0;
+  String? lever;
+  // int? remove;
+  @override
+  void dispose() {
+    stopTime();
+    // TODO: implement dispose
+    super.dispose();
+  }
 
+  void startTime() {
+    StartTime = DateTime.now();
+    timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+      final now = DateTime.now();
+      final temp = now.difference(StartTime!);
+      Minutes = temp.inMinutes;
+      Seconds = temp.inSeconds % 60 ;
+      notifyListeners();
+    });
+  }
 
+  void stopTime() {
+    timer?.cancel();
+    timer = null;
+  }
+
+  String Time() {
+    final minutes = Minutes.toString().padLeft(2, '0');
+    final seconds = Seconds.toString().padLeft(2, '0');
+    return '$minutes.$seconds';
+  }
+
+  double PointComplete() {
+    final minutes = Minutes * 60;
+    final seconds = Seconds;
+    double result = 10000 / (minutes + seconds);
+    return double.parse(result.toStringAsFixed(1));
+  }
+
+  bool checkEnd(int err_point) {
+    if (err_point == 3) {
+      return true;
+    }
+    return false;
+  }
+
+  bool completeSudoku(List<List<int>> boardcur, List<List<int>> _fullBoard) {
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        //check cột và dòng của cả 2 bảng nếu chỉ cần 1 ô không giống => false
+        if (boardcur[i][j] != _fullBoard[i][j]) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  
   // Kiểm tra xem một số có thể đặt tại vị trí (row, col) hay không
-  bool canPlace(int num, int row, int col) {
+  bool checkNumberInTable(int num, int row, int col) {
     for (int i = 0; i < 9; i++) {
       if (board[row][i] == num || board[i][col] == num) return false;
     }
@@ -49,7 +110,7 @@ class SudokuStart extends ChangeNotifier{
     }
 
     for (int num in numbers) {
-      if (canPlace(num, row, col)) {
+      if (checkNumberInTable(num, row, col)) {
         board[row][col] = num;
         if (fillBoard(row, col + 1)) return true;
         board[row][col] = 0;
@@ -79,19 +140,21 @@ class SudokuStart extends ChangeNotifier{
     }
     
   }
-    List<List<int>> _deepCopyBoard(List<List<int>> board) {
+  List<List<int>> _deepCopyBoard(List<List<int>> board) {
     return board.map((row) => List<int>.from(row)).toList();
   }
 
 
   // Tạo mảng ban đầu cho game Sudoku
-  List<List<int>> createSudokuPuzzle(int numToRemove) {
+  List<List<int>> createSudokuPuzzle(String Lever ,int numToRemove) {
+    lever = Lever;
     board = List.generate(9, (_) => List.filled(9, 0));
     generateSudoku();
     _fullBoard = _deepCopyBoard(board);
     print(_fullBoard);
     removeDigits(board, numToRemove);
     boardcur = board;
+    startTime();
     return board;
   }
 
@@ -112,7 +175,7 @@ class SudokuStart extends ChangeNotifier{
   }
 
   // Đặt số tại vị trí ô đã chọn
-  void placeNumber(int number) {
+  void placeNumber(int number,context) {
     try {
      
       if (selectedRow != null && selectedCol != null && editableCells[selectedRow!][selectedCol!]) {
@@ -121,12 +184,25 @@ class SudokuStart extends ChangeNotifier{
             print("xanh");
             boardcur[selectedRow!][selectedCol!] = number; 
             checkCell[selectedRow!][selectedCol!] = true;
+            if (completeSudoku(boardcur, _fullBoard)){
+              DialogComplete(context);
+              stopTime();
+              print("hoàn thành");
+            }
+            else {
+              print("chưa hoàn thành");
+            }
           }
           else {
             print("đỏ");
             boardcur[selectedRow!][selectedCol!] = number; 
             checkCell[selectedRow!][selectedCol!] = false;
             errorpoint++;
+            if (checkEnd(errorpoint)) {
+              stopTime();
+              //kiểm tra nếu sai 3 lỗi thì hiện và chơi lại
+              DialogEnd(context);
+            }
           }
           // boardcur[selectedRow!][selectedCol!] = number;
           notifyListeners();
@@ -149,5 +225,126 @@ class SudokuStart extends ChangeNotifier{
       print("Error: $e");
     }
   }
+
+  void DialogEnd(BuildContext context) {
+    //widget remake
+    Widget remake = InkWell(
+      child: Container(
+        alignment: Alignment.center,
+        height: ((MediaQuery.of(context).size.height) / 15.0) ,
+        width: ((MediaQuery.of(context).size.height) / 10.0),
+        decoration: BoxDecoration(
+          color: Colors.orange.shade900,
+          borderRadius: BorderRadius.all(Radius.circular(5))
+        ),
+        child: Text("Chơi lại",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),textAlign: TextAlign.center,),
+      ),
+      onTap: () {
+        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: lever!)),
+        );
+      },
+    );
+    showDialog(
+      context: context,
+      //bắt buộc phải nhấn nút remake 
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(  
+          backgroundColor: Colors.amberAccent ,
+          shape: RoundedRectangleBorder(
+              side:  BorderSide(color: Colors.brown,width: 3),
+              borderRadius: BorderRadius.all(Radius.circular(15))
+          ),
+          title: Text("Game Over",
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: Colors.white
+          ),
+          textAlign: TextAlign.center,
+          ),
+          content: Text("Bạn đã sai 3 lỗi !",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black
+          ),
+          textAlign: TextAlign.center,
+          ),
+          actions: [ 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                remake
+              ],
+            )
+          ],  
+        );
+      },
+    );
+  }
+
+  void DialogComplete(BuildContext context) {
+    //widget remake
+    Widget complete = InkWell(
+      child: Container(
+        alignment: Alignment.center,
+        height: ((MediaQuery.of(context).size.height) / 15.0) ,
+        width: ((MediaQuery.of(context).size.height) / 10.0),
+        decoration: BoxDecoration(
+          color: Colors.orange.shade900,
+          borderRadius: BorderRadius.all(Radius.circular(5))
+        ),
+        child: Text("Về trang chủ",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),textAlign: TextAlign.center,),
+      ),
+      onTap: () {
+        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => trangchu_Screen()),
+        );
+      },
+    );
+    showDialog(
+      context: context,
+      //bắt buộc phải nhấn nút remake 
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(  
+          backgroundColor: Colors.amberAccent ,
+          shape: RoundedRectangleBorder(
+              side:  BorderSide(color: Colors.brown,width: 3),
+              borderRadius: BorderRadius.all(Radius.circular(15))
+          ),
+          title: Text("Complete",
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: Colors.white
+          ),
+          textAlign: TextAlign.center,
+          ),
+          content: Text("Bạn đã hoàn thành trò chơi ở cấp độ $lever với số điểm là ${PointComplete().toString()}",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black
+          ),
+          textAlign: TextAlign.center,
+          ),
+          actions: [ 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                complete
+              ],
+            )
+          ],  
+        );
+      },
+    );
+  }
+  
   bool check_Cell(int row, int col) => checkCell[row][col];
 }
