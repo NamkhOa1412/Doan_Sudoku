@@ -19,7 +19,7 @@ class Button_Number extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         //nhập giá trị lên ma trận
-        Provider.of<SudokuStart>(context, listen: false).placeNumber(data);
+        Provider.of<SudokuStart>(context, listen: false).placeNumber(data,context);
       },
       child: Container(
         width: width / 12,
