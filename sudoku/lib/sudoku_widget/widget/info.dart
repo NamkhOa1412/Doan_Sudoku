@@ -5,18 +5,28 @@ import 'package:sudoku/Sudoku_provider.dart/CreateSudokuStart.dart';
 import 'package:sudoku/Untils/custom-text.dart';
 
 class Info_sudoku_play extends StatefulWidget {
-  String lever;
-  Info_sudoku_play({ Key? key , required this.lever}) : super(key: key);
+  Info_sudoku_play({ Key? key}) : super(key: key);
 
   @override
   State<Info_sudoku_play> createState() => _Info_sudoku_playState();
 }
 
 class _Info_sudoku_playState extends State<Info_sudoku_play> {
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   loadData();
+  // }
+
+  // Future<void> loadData() async {
+  //   await Provider.of<SudokuStart>(context, listen: false).loadGameState();
+  //   setState(() {}); // Update the state to reflect the loaded data
+  // }
   @override
   Widget build(BuildContext context) {
     final error = context.watch<SudokuStart>().errorpoint;
     final time = context.watch<SudokuStart>().Time();
+    final Lever = context.watch<SudokuStart>().lever;
     return Container(
       child: Column(
         children: [
@@ -55,7 +65,7 @@ class _Info_sudoku_playState extends State<Info_sudoku_play> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                       //cấp độ
-                      CustomText(text: widget.lever,fontsize: 15),
+                      CustomText(text: Lever,fontsize: 15),
                     ],),
                   ),
                   Expanded(

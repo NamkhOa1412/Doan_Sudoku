@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:sudoku/Sudoku_provider.dart/CreateSudokuStart.dart';
+import 'package:sudoku/Sudoku_provider.dart/Provider.dart';
 import 'package:sudoku/sudoku_widget/sudoku_play_screen.dart';
 
 class trangchu_Screen extends StatefulWidget {
@@ -12,6 +15,8 @@ class trangchu_Screen extends StatefulWidget {
 class _trangchu_ScreenState extends State<trangchu_Screen> {
   @override
   Widget build(BuildContext context) {
+    // final Lever = context.watch<SudokuStart>().lever;
+    // Provider.of<SudokuStart>(context, listen: false).loadGameState();
     return Scaffold(
       body: Container(
       decoration: BoxDecoration(
@@ -58,7 +63,7 @@ class _trangchu_ScreenState extends State<trangchu_Screen> {
                   ),
                   InkWell(
                     
-                    child: Container(
+                    child:Container(
                       height: ((MediaQuery.of(context).size.height) / 15.0) ,
                       width: ((MediaQuery.of(context).size.height) / 5.0),
                       decoration: BoxDecoration(
@@ -68,7 +73,12 @@ class _trangchu_ScreenState extends State<trangchu_Screen> {
                       
                     ),
                     onTap: () {
-                      
+                      Navigator.of(context, rootNavigator: true).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: "", type: "continue")),
+                      );
+                      // print(Provider.of<SudokuStart>(context, listen: false).lever);
                     },
                   ),
                     Container(
@@ -117,8 +127,7 @@ showAlertDialog(BuildContext context) {
                     ),
                     onTap: () {
                       Navigator.of(context, rootNavigator: true).pop();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: "Dễ",)));
-                      
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: "Dễ",type: "new game",)));
                     },
                   );
   Widget hardButton = InkWell(
@@ -134,7 +143,7 @@ showAlertDialog(BuildContext context) {
                     ),
                     onTap: () {
                       Navigator.of(context, rootNavigator: true).pop();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: "Khó",)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: "Khó",type: "new game")));
                       
                     },
                   );

@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:sudoku/Sudoku_provider.dart/CreateSudokuStart.dart';
+import 'package:sudoku/Sudoku_provider.dart/Provider.dart';
 import 'package:sudoku/Untils/custom-text.dart';
+import 'package:sudoku/sudoku_trangchu/screen_Stargame.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -32,7 +36,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             size: 24,
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            // Navigator.of(context).pop();
+            // Provider.of<SudokuStart>(context, listen: false).saveGameState();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => MultiProvider(
+                providers: [
+                  ChangeNotifierProvider(create: (_) => SudokuStart()),
+                  ChangeNotifierProvider(create: (_) => SudokuColorProvider()),
+                ],
+                child: trangchu_Screen(),
+              )),
+            );
           }),
       actions: actions,
     );
