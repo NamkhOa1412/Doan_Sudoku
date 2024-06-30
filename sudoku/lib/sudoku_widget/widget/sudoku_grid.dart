@@ -8,19 +8,25 @@ class SudokuGrid extends StatefulWidget {
   final List<List<int>> grid;
   final List<List<bool>> editableCells;
   final String lever;
+  final String type;
 
-  SudokuGrid({required this.grid, required this.editableCells, required this.lever});
+  SudokuGrid({required this.grid, required this.editableCells, required this.lever, required this.type});
   @override
   _SudokuGridState createState() => _SudokuGridState();
 }
 
 class _SudokuGridState extends State<SudokuGrid> {
-  late List<List<int>> sudokuBoard;
+  List<List<int>>? sudokuBoard;
 
   @override
   void initState() {
     super.initState();
-    sudokuBoard = Provider.of<SudokuStart>(context, listen: false).createSudokuPuzzle(widget.lever ,widget.lever == "Dễ" ? 40 : 45);
+    widget.type == "new game" ? sudokuBoard = Provider.of<SudokuStart>(context, listen: false).createSudokuPuzzle(widget.lever ,widget.lever == "Dễ" ? 1 : 45) : loadData();
+  }
+
+  Future<void> loadData() async {
+    sudokuBoard = await Provider.of<SudokuStart>(context, listen: false).loadGameState(context);
+    setState(() {});
   }
 
   @override
@@ -47,10 +53,11 @@ class _SudokuGridState extends State<SudokuGrid> {
               bottom: BorderSide(width: bottomBorder, color: Colors.black),
             ),
           ),
-          child: SudokuCell(
+          child:
+          SudokuCell(
             row: row,
             col: col,
-            value: sudokuBoard[row][col],
+            value: sudokuBoard![row][col],
             isEditable: widget.editableCells[row][col],
             cellColor: color.cellColors[row][col],
             onChanged: (newValue) {

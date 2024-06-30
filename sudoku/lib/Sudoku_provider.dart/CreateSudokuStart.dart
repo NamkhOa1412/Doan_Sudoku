@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudoku/sudoku_trangchu/screen_Stargame.dart';
 import 'package:sudoku/sudoku_widget/sudoku_play_screen.dart';
 
@@ -20,12 +21,13 @@ class SudokuStart extends ChangeNotifier{
   DateTime? StartTime;
   int Minutes = 0;
   int Seconds = 0;
-  String? lever;
-  // int? remove;
+  String lever= "";
+  
   @override
   void dispose() {
     stopTime();
     // TODO: implement dispose
+    saveGameState();
     super.dispose();
   }
 
@@ -97,6 +99,7 @@ class SudokuStart extends ChangeNotifier{
 
   // Khởi tạo mảng Sudoku đầy đủ
   bool fillBoard(int row, int col) {
+    //điểm kết thúc
     if (row == 8 && col == 9) return true;
 
     if (col == 9) {
@@ -112,6 +115,7 @@ class SudokuStart extends ChangeNotifier{
     for (int num in numbers) {
       if (checkNumberInTable(num, row, col)) {
         board[row][col] = num;
+        //đệ quy
         if (fillBoard(row, col + 1)) return true;
         board[row][col] = 0;
       }
@@ -226,6 +230,81 @@ class SudokuStart extends ChangeNotifier{
     }
   }
 
+  void continueTime(int minutes, int seconds) {
+    Minutes = minutes;
+    Seconds = seconds;
+    StartTime = DateTime.now().subtract(Duration(minutes: minutes, seconds: seconds));
+    timer = Timer.periodic(Duration(seconds: 1), (Timer timer) async {
+      final now = DateTime.now();
+      final temp = now.difference(StartTime!);
+      Minutes = temp.inMinutes;
+      Seconds = temp.inSeconds % 60;
+      notifyListeners();
+    });
+  }
+
+  Future<void> saveGameState() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> boardCurStrings = boardcur.map((row) => row.join(',')).toList();
+    List<String> fullBoardStrings = _fullBoard.map((row) => row.join(',')).toList();
+    List<String> editableCellsStrings = editableCells.map((row) => row.map((e) => e ? '1' : '0').join(',')).toList();
+    List<String> checkCellStrings = checkCell.map((row) => row.map((e) => e ? '1' : '0').join(',')).toList();
+
+    await prefs.setStringList('boardCur', boardCurStrings);
+    await prefs.setStringList('fullBoard', fullBoardStrings);
+    await prefs.setStringList('editableCells', editableCellsStrings);
+    await prefs.setStringList('checkCell', checkCellStrings);
+
+    await prefs.setInt('minutes', Minutes);
+    await prefs.setInt('seconds', Seconds);
+    await prefs.setInt('errorPoint', errorpoint);
+    await prefs.setString('lever', lever);
+  }
+
+  Future<List<List<int>>> loadGameState(context) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String>? boardCurStrings = prefs.getStringList('boardCur');
+    List<String>? fullBoardStrings = prefs.getStringList('fullBoard');
+    List<String>? editableCellsStrings = prefs.getStringList('editableCells');
+    List<String>? checkCellStrings = prefs.getStringList('checkCell');
+    int? error = prefs.getInt('errorPoint');
+    String? lever_ = prefs.getString('lever');
+    int? m = prefs.getInt('minutes');
+    int? s = prefs.getInt('seconds');
+    if (boardCurStrings != null && fullBoardStrings != null && editableCellsStrings != null && checkCellStrings != null) {
+      boardcur = boardCurStrings.map((row) => row.split(',').map(int.parse).toList()).toList();
+      _fullBoard = fullBoardStrings.map((row) => row.split(',').map(int.parse).toList()).toList();
+      editableCells = editableCellsStrings.map((row) => row.split(',').map((e) => e == '1').toList()).toList();
+      checkCell = checkCellStrings.map((row) => row.split(',').map((e) => e == '1').toList()).toList();
+      errorpoint = error ?? 0;
+      lever = lever_ ?? "";
+      Minutes = m ?? 0;
+      Seconds = s ?? 0;
+      continueTime(Minutes, Seconds);
+    }
+    if (lever == "") {
+      stopTime();
+      DialogContinue(context);
+    }
+    notifyListeners();
+    return boardcur;
+  }
+
+  void clearGameState() {
+    stopTime();
+    board = List.generate(9, (_) => List.filled(9, 0));
+    boardcur = List.generate(9, (_) => List.filled(9, 0));
+    _fullBoard = List.generate(9, (_) => List.filled(9, 0));
+    editableCells = List.generate(9, (_) => List.filled(9, true));
+    checkCell = List.generate(9, (_) => List.filled(9, true));
+    selectedRow = null;
+    selectedCol = null;
+    errorpoint = 0;
+    Minutes = 0;
+    Seconds = 0;
+    lever = "";
+  }
+
   void DialogEnd(BuildContext context) {
     //widget remake
     Widget remake = InkWell(
@@ -243,7 +322,7 @@ class SudokuStart extends ChangeNotifier{
         Navigator.of(context, rootNavigator: true).pop();
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: lever!)),
+          MaterialPageRoute(builder: (context) => Sudoku_Screen(lever: lever,type: "new game")),
         );
       },
     );
@@ -258,7 +337,7 @@ class SudokuStart extends ChangeNotifier{
               side:  BorderSide(color: Colors.brown,width: 3),
               borderRadius: BorderRadius.all(Radius.circular(15))
           ),
-          title: Text("Game Over",
+          title: Text("Thất bại",
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
@@ -300,6 +379,7 @@ class SudokuStart extends ChangeNotifier{
         child: Text("Về trang chủ",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),textAlign: TextAlign.center,),
       ),
       onTap: () {
+        clearGameState();
         Navigator.of(context, rootNavigator: true).pop();
         Navigator.pushReplacement(
           context,
@@ -318,7 +398,7 @@ class SudokuStart extends ChangeNotifier{
               side:  BorderSide(color: Colors.brown,width: 3),
               borderRadius: BorderRadius.all(Radius.circular(15))
           ),
-          title: Text("Complete",
+          title: Text("Hoàn thành",
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
@@ -327,6 +407,66 @@ class SudokuStart extends ChangeNotifier{
           textAlign: TextAlign.center,
           ),
           content: Text("Bạn đã hoàn thành trò chơi ở cấp độ $lever với số điểm là ${PointComplete().toString()}",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black
+          ),
+          textAlign: TextAlign.center,
+          ),
+          actions: [ 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                complete
+              ],
+            )
+          ],  
+        );
+      },
+    );
+  }
+
+  void DialogContinue(BuildContext context) {
+    //widget remake
+    Widget complete = InkWell(
+      child: Container(
+        alignment: Alignment.center,
+        height: ((MediaQuery.of(context).size.height) / 15.0) ,
+        width: ((MediaQuery.of(context).size.height) / 10.0),
+        decoration: BoxDecoration(
+          color: Colors.orange.shade900,
+          borderRadius: BorderRadius.all(Radius.circular(5))
+        ),
+        child: Text("Về trang chủ",style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),textAlign: TextAlign.center,),
+      ),
+      onTap: () {
+        Navigator.of(context, rootNavigator: true).pop();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => trangchu_Screen()),
+        );
+      },
+    );
+    showDialog(
+      context: context,
+      //bắt buộc phải nhấn nút remake 
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(  
+          backgroundColor: Colors.amberAccent ,
+          shape: RoundedRectangleBorder(
+              side:  BorderSide(color: Colors.brown,width: 3),
+              borderRadius: BorderRadius.all(Radius.circular(15))
+          ),
+          title: Text("Thông báo",
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: Colors.white
+          ),
+          textAlign: TextAlign.center,
+          ),
+          content: Text("Bạn đã hoàn thành trò chơi trước đó",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black

@@ -11,7 +11,8 @@
 
   class Sudoku_Screen extends StatefulWidget {
     String lever;
-    Sudoku_Screen({ Key? key , required this.lever}) : super(key: key);
+    String type;
+    Sudoku_Screen({ Key? key , required this.lever, required this.type}) : super(key: key);
 
     @override
     State<Sudoku_Screen> createState() => _Sudoku_ScreenState();
@@ -40,7 +41,7 @@
               //Điểm số, cấp độ, số lần lỗi và thờ gian
               Expanded(
                 flex: 1, 
-                child: Info_sudoku_play(lever: widget.lever)
+                child: Info_sudoku_play()
               ),
               Expanded(
                 flex: 6,
@@ -61,6 +62,7 @@
                           grid: grid,
                           editableCells: editableCells,
                           lever: widget.lever,
+                          type: widget.type,
                         ),
                       // ),
                     ),
