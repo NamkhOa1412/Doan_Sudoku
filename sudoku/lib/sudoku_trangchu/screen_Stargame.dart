@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:sudoku/Sudoku_provider.dart/CreateSudokuStart.dart';
-import 'package:sudoku/Sudoku_provider.dart/Provider.dart';
+import 'package:sudoku/sudoku_trangchu/screen_ThanhTich.dart';
 import 'package:sudoku/sudoku_widget/sudoku_play_screen.dart';
+
 
 class trangchu_Screen extends StatefulWidget {
   const trangchu_Screen({Key? key}) : super(key: key);
@@ -18,6 +17,15 @@ class _trangchu_ScreenState extends State<trangchu_Screen> {
     // final Lever = context.watch<SudokuStart>().lever;
     // Provider.of<SudokuStart>(context, listen: false).loadGameState();
     return Scaffold(
+       floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,MaterialPageRoute(builder: (context) => GameResultsScreen()),);
+         
+        },
+        child: Image.asset('assets/image_trangchu/nut.png'),
+        backgroundColor: Colors.transparent, // Đặt màu nền trong suốt (nếu cần)
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Container(
       decoration: BoxDecoration(
         image: DecorationImage(image: AssetImage("assets/image_trangchu/h4.jpg"),

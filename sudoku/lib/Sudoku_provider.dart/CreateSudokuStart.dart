@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sudoku/sudoku_trangchu/cls_DiemSo.dart';
 import 'package:sudoku/sudoku_trangchu/screen_Stargame.dart';
 import 'package:sudoku/sudoku_widget/sudoku_play_screen.dart';
 
@@ -148,7 +149,6 @@ class SudokuStart extends ChangeNotifier{
     return board.map((row) => List<int>.from(row)).toList();
   }
 
-
   // Tạo mảng ban đầu cho game Sudoku
   List<List<int>> createSudokuPuzzle(String Lever ,int numToRemove) {
     lever = Lever;
@@ -204,6 +204,7 @@ class SudokuStart extends ChangeNotifier{
             errorpoint++;
             if (checkEnd(errorpoint)) {
               stopTime();
+              saveGameResult();
               //kiểm tra nếu sai 3 lỗi thì hiện và chơi lại
               DialogEnd(context);
             }
@@ -217,6 +218,23 @@ class SudokuStart extends ChangeNotifier{
       print("Error: $e");
     }
   }
+
+  void saveGameResult() async {
+  double result = PointComplete();
+  int minutes = Minutes;
+  int seconds = Seconds;
+  String level = lever;
+
+  Map<String, dynamic> gameResult = {
+    'result': result,
+    'minutes': minutes,
+    'seconds': seconds,
+    'level': level,
+  };
+
+  print(gameResult);
+  await DatabaseHelper().insertGameResult(gameResult);
+}
 
   void selectCell(int row, int col) {
     try {
