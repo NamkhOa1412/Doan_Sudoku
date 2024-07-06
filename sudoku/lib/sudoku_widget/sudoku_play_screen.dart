@@ -20,7 +20,6 @@
 
   class _Sudoku_ScreenState extends State<Sudoku_Screen> {
     List<List<int>> grid = List.generate(9, (index) => List.generate(9, (index) => 0));
-    List<List<bool>> editableCells = List.generate(9, (index) => List.generate(9, (index) => false));
 
     @override
     Widget build(BuildContext context) {
@@ -60,7 +59,6 @@
                       //   child:  
                         SudokuGrid(
                           grid: grid,
-                          editableCells: editableCells,
                           lever: widget.lever,
                           type: widget.type,
                         ),

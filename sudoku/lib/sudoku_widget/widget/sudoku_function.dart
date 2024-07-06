@@ -8,6 +8,7 @@ class Sudoku_Func extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final check_pencil = context.watch<SudokuStart>().pencil;
     return Container(
       child: Row(
         children: [
@@ -33,14 +34,26 @@ class Sudoku_Func extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 print("viết chì");
+                Provider.of<SudokuStart>(context,listen: false).pencilMode(); 
               },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset("assets/icon/icons8-pencil-20.png"),
-                  Text("Viết chì")
-                ],
+              child: Stack(
+                children : [
+                  Container(
+                    alignment: Alignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset("assets/icon/icons8-pencil-20.png"),
+                        Text("Viết chì")
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 60,
+                    child: Text(check_pencil ? "On" : "Off",style: TextStyle(color: check_pencil ? Colors.green : null,fontWeight: FontWeight.bold),)
+                  )
+                ]
               ),
             ),
           ),
