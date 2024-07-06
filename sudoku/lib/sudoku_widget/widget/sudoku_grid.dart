@@ -6,11 +6,10 @@ import 'sudoku_cell.dart';
 
 class SudokuGrid extends StatefulWidget {
   final List<List<int>> grid;
-  final List<List<bool>> editableCells;
   final String lever;
   final String type;
 
-  SudokuGrid({required this.grid, required this.editableCells, required this.lever, required this.type});
+  SudokuGrid({required this.grid,required this.lever, required this.type});
   @override
   _SudokuGridState createState() => _SudokuGridState();
 }
@@ -21,7 +20,7 @@ class _SudokuGridState extends State<SudokuGrid> {
   @override
   void initState() {
     super.initState();
-    widget.type == "new game" ? sudokuBoard = Provider.of<SudokuStart>(context, listen: false).createSudokuPuzzle(widget.lever ,widget.lever == "Dễ" ? 1 : 45) : loadData();
+    widget.type == "new game" ? sudokuBoard = Provider.of<SudokuStart>(context, listen: false).createSudokuPuzzle(widget.lever ,widget.lever == "Dễ" ? 20 : 35) : loadData();
   }
 
   Future<void> loadData() async {
@@ -58,7 +57,6 @@ class _SudokuGridState extends State<SudokuGrid> {
             row: row,
             col: col,
             value: sudokuBoard![row][col],
-            isEditable: widget.editableCells[row][col],
             cellColor: color.cellColors[row][col],
             onChanged: (newValue) {
               widget.grid[row][col] = newValue;

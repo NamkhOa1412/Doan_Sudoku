@@ -23,6 +23,8 @@ class SudokuStart extends ChangeNotifier{
   int Minutes = 0;
   int Seconds = 0;
   String lever= "";
+  bool pencil = false;
+  List<List<Set<int>>> pencilboard = List.generate(9, (_) => List.generate(9, (_) => <int>{}));
   
   @override
   void dispose() {
@@ -30,6 +32,23 @@ class SudokuStart extends ChangeNotifier{
     // TODO: implement dispose
     saveGameState();
     super.dispose();
+  }
+
+  void pencilMode() {
+    pencil = !pencil;
+    print(pencil);
+    notifyListeners();
+  }
+
+  void addPencilBoard(int number) {
+    if (selectedRow != null && selectedCol != null && editableCells[selectedRow!][selectedCol!]) {
+      if (pencilboard[selectedRow!][selectedCol!].contains(number)) {
+        pencilboard[selectedRow!][selectedCol!].remove(number);
+      } else {
+        pencilboard[selectedRow!][selectedCol!].add(number);
+      }
+      notifyListeners();
+    }
   }
 
   void startTime() {
@@ -62,7 +81,7 @@ class SudokuStart extends ChangeNotifier{
   }
 
   bool checkEnd(int err_point) {
-    if (err_point == 3) {
+    if (err_point > 3) {
       return true;
     }
     return false;
@@ -181,38 +200,42 @@ class SudokuStart extends ChangeNotifier{
   // Đặt số tại vị trí ô đã chọn
   void placeNumber(int number,context) {
     try {
-     
       if (selectedRow != null && selectedCol != null && editableCells[selectedRow!][selectedCol!]) {
-        if(boardcur[selectedRow!][selectedCol!] == 0 ) {
-          if(_fullBoard[selectedRow!][selectedCol!] == number) {
-            print("xanh");
-            boardcur[selectedRow!][selectedCol!] = number; 
-            checkCell[selectedRow!][selectedCol!] = true;
-            if (completeSudoku(boardcur, _fullBoard)){
-              DialogComplete(context);
-              stopTime();
-              print("hoàn thành");
+        if (pencil) {
+          addPencilBoard(number);
+        }
+        else {
+          if(boardcur[selectedRow!][selectedCol!] == 0 ) {
+            if(_fullBoard[selectedRow!][selectedCol!] == number) {
+              print("xanh");
+              boardcur[selectedRow!][selectedCol!] = number; 
+              checkCell[selectedRow!][selectedCol!] = true;
+              if (completeSudoku(boardcur, _fullBoard)){
+                DialogComplete(context);
+                stopTime();
+                saveGameResult();
+                print("hoàn thành");
+              }
+              else {
+                print("chưa hoàn thành");
+              }
             }
             else {
-              print("chưa hoàn thành");
+              print("đỏ");
+              boardcur[selectedRow!][selectedCol!] = number; 
+              checkCell[selectedRow!][selectedCol!] = false;
+              errorpoint++;
+              if (checkEnd(errorpoint)) {
+                stopTime();
+                //kiểm tra nếu sai 3 lỗi thì hiện và chơi lại
+                DialogEnd(context);
+              }
             }
+            // boardcur[selectedRow!][selectedCol!] = number;
+            notifyListeners();
           }
-          else {
-            print("đỏ");
-            boardcur[selectedRow!][selectedCol!] = number; 
-            checkCell[selectedRow!][selectedCol!] = false;
-            errorpoint++;
-            if (checkEnd(errorpoint)) {
-              stopTime();
-              saveGameResult();
-              //kiểm tra nếu sai 3 lỗi thì hiện và chơi lại
-              DialogEnd(context);
-            }
-          }
-          // boardcur[selectedRow!][selectedCol!] = number;
-          notifyListeners();
+          else { print("lỗi"); }
         }
-        else { print("lỗi"); }
       }
     } catch (e) {
       print("Error: $e");
@@ -277,6 +300,11 @@ class SudokuStart extends ChangeNotifier{
     await prefs.setInt('seconds', Seconds);
     await prefs.setInt('errorPoint', errorpoint);
     await prefs.setString('lever', lever);
+
+    List<String> pencilBoardStrings = pencilboard.map((row) =>
+      row.map((set) => set.join(',')).toList().join(';')
+    ).toList();
+    await prefs.setStringList('pencilBoard', pencilBoardStrings);
   }
 
   Future<List<List<int>>> loadGameState(context) async {
@@ -289,6 +317,7 @@ class SudokuStart extends ChangeNotifier{
     String? lever_ = prefs.getString('lever');
     int? m = prefs.getInt('minutes');
     int? s = prefs.getInt('seconds');
+    List<String>? pencilBoard = prefs.getStringList('pencilBoard');
     if (boardCurStrings != null && fullBoardStrings != null && editableCellsStrings != null && checkCellStrings != null) {
       boardcur = boardCurStrings.map((row) => row.split(',').map(int.parse).toList()).toList();
       _fullBoard = fullBoardStrings.map((row) => row.split(',').map(int.parse).toList()).toList();
@@ -299,6 +328,11 @@ class SudokuStart extends ChangeNotifier{
       Minutes = m ?? 0;
       Seconds = s ?? 0;
       continueTime(Minutes, Seconds);
+      pencilboard = pencilBoard!.map((row) =>
+        row.split(';').map((set) =>
+          set.isEmpty ? <int>{} : set.split(',').map(int.parse).toSet()
+        ).toList()
+      ).toList();
     }
     if (lever == "") {
       stopTime();

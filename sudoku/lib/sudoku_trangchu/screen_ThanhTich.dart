@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sudoku/Untils/custom-text.dart';
 import 'package:sudoku/sudoku_trangchu/cls_DiemSo.dart';
 
 
@@ -42,7 +43,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-         title: Text("THÀNH TÍCH",style: TextStyle(fontSize: 50.0),),
+         title: CustomText(text: "Thành tích", fontWeight: FontWeight.bold,textColor: Colors.white,),
          backgroundColor: Colors.green.shade700,   
           bottom: TabBar(
             tabs: [
@@ -64,7 +65,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
           //   color: Colors.amberAccent,
           //  ), textAlign: TextAlign.center),
            Text(
-              "Điểm số cao nhât: $_highestResult",
+              "Điểm số cao nhất: $_highestResult",
                style: TextStyle(fontSize: 40.0),textAlign: TextAlign.center,
              ), 
              Expanded(

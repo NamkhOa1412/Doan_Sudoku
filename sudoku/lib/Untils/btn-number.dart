@@ -16,6 +16,7 @@ class Button_Number extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final check_pencil = context.watch<SudokuStart>().pencil;
     return GestureDetector(
       onTap: () {
         //nhập giá trị lên ma trận
@@ -25,7 +26,7 @@ class Button_Number extends StatelessWidget {
         width: width / 12,
         height: height,
         decoration: BoxDecoration(
-            color: Colors.green.shade700,
+            color: check_pencil ?  Colors.grey.shade700 : Colors.green.shade700,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
