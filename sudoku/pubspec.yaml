@@ -42,6 +42,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.11.0
+
+flutter_icons:
+  image_path: "assets/logo/sudoku.png" 
+  android: true
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -64,6 +69,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icon/
+    - assets/logo/
     - assets/image_trangchu/h4.jpg
     - assets/image_trangchu/sta.png
     - assets/image_trangchu/ctn.png
