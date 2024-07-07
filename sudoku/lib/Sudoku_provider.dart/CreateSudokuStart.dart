@@ -355,6 +355,7 @@ class SudokuStart extends ChangeNotifier{
     Minutes = 0;
     Seconds = 0;
     lever = "";
+    pencilboard = List.generate(9, (_) => List.generate(9, (_) => <int>{}));
   }
 
   void DialogEnd(BuildContext context) {
