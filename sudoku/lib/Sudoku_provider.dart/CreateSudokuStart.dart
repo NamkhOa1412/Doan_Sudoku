@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sudoku/Untils/custom-text.dart';
 import 'package:sudoku/sudoku_trangchu/cls_DiemSo.dart';
 import 'package:sudoku/sudoku_trangchu/screen_Stargame.dart';
 import 'package:sudoku/sudoku_widget/sudoku_play_screen.dart';
@@ -25,6 +26,8 @@ class SudokuStart extends ChangeNotifier{
   String lever= "";
   bool pencil = false;
   List<List<Set<int>>> pencilboard = List.generate(9, (_) => List.generate(9, (_) => <int>{}));
+  int suggest = 3;
+
   
   @override
   void dispose() {
@@ -38,6 +41,30 @@ class SudokuStart extends ChangeNotifier{
     pencil = !pencil;
     print(pencil);
     notifyListeners();
+  }
+
+  void suggest_number (context) {
+    if (suggest > 0) {
+      if (selectedRow != null && selectedCol != null && editableCells[selectedRow!][selectedCol!]) {
+        if (boardcur[selectedRow!][selectedCol!] != 0 && checkCell[selectedRow!][selectedCol!] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: CustomText(text: "Chọn ô trống để sử dụng chức năng", textColor: Colors.white)));
+        }
+        else {
+          boardcur[selectedRow!][selectedCol!] = _fullBoard[selectedRow!][selectedCol!]; 
+          checkCell[selectedRow!][selectedCol!] = true;
+          suggest--;
+          notifyListeners();
+        }
+      }else {
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: CustomText(text: "Chọn ô trống để sử dụng chức năng", textColor: Colors.white)));
+      }
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: CustomText(text: "Bạn đã sử dụng hết 3 lượt gợi ý", textColor: Colors.white)));
+    }
   }
 
   void addPencilBoard(int number) {
@@ -305,6 +332,7 @@ class SudokuStart extends ChangeNotifier{
       row.map((set) => set.join(',')).toList().join(';')
     ).toList();
     await prefs.setStringList('pencilBoard', pencilBoardStrings);
+    await prefs.setInt('suggest', suggest);
   }
 
   Future<List<List<int>>> loadGameState(context) async {
@@ -318,6 +346,7 @@ class SudokuStart extends ChangeNotifier{
     int? m = prefs.getInt('minutes');
     int? s = prefs.getInt('seconds');
     List<String>? pencilBoard = prefs.getStringList('pencilBoard');
+    int? sug = prefs.getInt('suggest');
     if (boardCurStrings != null && fullBoardStrings != null && editableCellsStrings != null && checkCellStrings != null) {
       boardcur = boardCurStrings.map((row) => row.split(',').map(int.parse).toList()).toList();
       _fullBoard = fullBoardStrings.map((row) => row.split(',').map(int.parse).toList()).toList();
@@ -333,6 +362,7 @@ class SudokuStart extends ChangeNotifier{
           set.isEmpty ? <int>{} : set.split(',').map(int.parse).toSet()
         ).toList()
       ).toList();
+      suggest = sug ?? 0;
     }
     if (lever == "") {
       stopTime();
@@ -356,6 +386,7 @@ class SudokuStart extends ChangeNotifier{
     Seconds = 0;
     lever = "";
     pencilboard = List.generate(9, (_) => List.generate(9, (_) => <int>{}));
+    suggest = 3;
   }
 
   void DialogEnd(BuildContext context) {
