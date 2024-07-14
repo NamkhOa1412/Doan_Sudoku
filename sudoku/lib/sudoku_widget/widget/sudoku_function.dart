@@ -9,11 +9,12 @@ class Sudoku_Func extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final check_pencil = context.watch<SudokuStart>().pencil;
+    final suggest = context.watch<SudokuStart>().suggest;
     return Container(
       child: Row(
         children: [
           Expanded(
-            flex: 5,
+            flex: 3,
             child: GestureDetector(
               onTap: () {
                 print("xóa");
@@ -30,7 +31,7 @@ class Sudoku_Func extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 5,
+            flex: 3,
             child: GestureDetector(
               onTap: () {
                 print("viết chì");
@@ -50,8 +51,36 @@ class Sudoku_Func extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    right: 60,
+                    right: 30,
                     child: Text(check_pencil ? "On" : "Off",style: TextStyle(color: check_pencil ? Colors.green : null,fontWeight: FontWeight.bold),)
+                  )
+                ]
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: GestureDetector(
+              onTap: () {
+                Provider.of<SudokuStart>(context,listen: false).suggest_number(context); 
+              },
+              child: Stack(
+                children : [
+                  Container(
+                    alignment: Alignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Image.asset("assets/icon/icons8-pencil-20.png"),
+                        Icon(Icons.lightbulb_outline_rounded),
+                        Text("Gợi ý")
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 40,
+                    child: Text(suggest.toString(),style: TextStyle(fontWeight: FontWeight.bold),)
                   )
                 ]
               ),
