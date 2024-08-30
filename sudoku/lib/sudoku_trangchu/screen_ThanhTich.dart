@@ -65,7 +65,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
           //   color: Colors.amberAccent,
           //  ), textAlign: TextAlign.center),
            Text(
-              "Điểm số cao nhất: $_highestResult",
+              "Điểm số cao nhất: ${_highestResult == 0.0 ? 0 : (_highestResult).toInt().toString()}",
                style: TextStyle(fontSize: 40.0),textAlign: TextAlign.center,
              ), 
              Expanded(
@@ -87,8 +87,9 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
                                 itemCount: snapshot.data!.length,
                                 itemBuilder: (context, index) {
                                   var result = snapshot.data![index];
+                                  int diem = (result['result'] as num).toInt();
                                   return ListTile(
-                                    title: Text('Điểm số: ${result['result']}'),
+                                    title: Text('Điểm số: ${diem.toString()}'),
                                     subtitle: Text('Thời gian: ${result['minutes']}:${result['seconds']}'),
                                   );
                                 },
@@ -112,8 +113,9 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
                                 itemCount: snapshot.data!.length,
                                 itemBuilder: (context, index) {
                                   var result = snapshot.data![index];
+                                  int diemkho = (result['result'] as num).toInt();
                                   return ListTile(
-                                    title: Text('Điểm số: ${result['result']}'),
+                                    title: Text('Điểm số:  ${diemkho.toString()}'),
                                     subtitle: Text('Thời gian: ${result['minutes']}:${result['seconds']}'),
                                   );
                                 },
