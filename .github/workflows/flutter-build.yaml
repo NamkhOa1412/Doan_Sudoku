@@ -1,0 +1,62 @@
+name: Flutter CI
+
+on:
+  push:
+    branches:
+      - master
+      - main
+jobs:
+  build-and-upload-apk-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.8.1'
+      - run: flutter pub get
+      - run: flutter build apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+  release:
+   name: Release APK
+   needs: build-and-upload-apk-file
+   runs-on: ubuntu-latest
+   steps:
+     - name: Get current date time
+       id: date
+       run: echo "::set-output name=now::$(date +'%d%m%Y-%H%M')"
+     - name: Get uuid
+       id: uuid
+       run: | 
+            echo "::set-output name=uuid::$(uuidgen)"
+     - name: Download APK from build
+       uses: actions/download-artifact@v1
+       with:
+         name: apk
+     - name: Create Release
+       id: create_release
+       uses: actions/create-release@v1
+       env:
+         GITHUB_TOKEN: ${{ secrets.TOKEN }}
+       with:
+         tag_name: ${{ steps.date.outputs.now }}-${{ steps.uuid.outputs.uuid }}
+         release_name: ${{ steps.date.outputs.now }}-${{ steps.uuid.outputs.uuid }}
+     - name: Upload Release APK
+       id: upload_release_asset
+       uses: actions/upload-release-asset@v1.0.1
+       env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       with:
+         upload_url: ${{ steps.create_release.outputs.upload_url }}
+         asset_path: apk/app-release.apk
+         asset_name: ${{ github.event.repository.name }}-${{ steps.date.outputs.now }}.apk
+         asset_content_type: application/zip
+     - name: distribute to firebase app distribution
+       uses: wzieba/Firebase-Distribution-Github-Action@v1.5.1
