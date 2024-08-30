@@ -54,6 +54,12 @@ class SudokuStart extends ChangeNotifier{
           boardcur[selectedRow!][selectedCol!] = _fullBoard[selectedRow!][selectedCol!]; 
           checkCell[selectedRow!][selectedCol!] = true;
           suggest--;
+          if (completeSudoku(boardcur, _fullBoard)){
+            DialogComplete(context);
+            stopTime();
+            saveGameResult();
+            print("hoàn thành");
+          }
           notifyListeners();
         }
       }else {

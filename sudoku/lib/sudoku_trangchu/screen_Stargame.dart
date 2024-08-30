@@ -179,7 +179,7 @@ showAlertDialog(BuildContext context) {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           easyButton,
-          hardButton,
+          hardButton
         ],
       )
     ],  
